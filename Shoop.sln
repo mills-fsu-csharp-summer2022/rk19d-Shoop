@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32505.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shoop", "Shoop\Shoop.csproj", "{D99B43CA-D246-478D-9A68-6895A79979A2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Library.Shoop", "Library.Shoop\Library.Shoop.csproj", "{8792FBEF-84FD-4A65-8AB4-7A2A3A4EF3DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D99B43CA-D246-478D-9A68-6895A79979A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99B43CA-D246-478D-9A68-6895A79979A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99B43CA-D246-478D-9A68-6895A79979A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99B43CA-D246-478D-9A68-6895A79979A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8792FBEF-84FD-4A65-8AB4-7A2A3A4EF3DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8792FBEF-84FD-4A65-8AB4-7A2A3A4EF3DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8792FBEF-84FD-4A65-8AB4-7A2A3A4EF3DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8792FBEF-84FD-4A65-8AB4-7A2A3A4EF3DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E502BDE-9993-4709-BAAD-61BEEAA78B4C}
+	EndGlobalSection
+EndGlobal
