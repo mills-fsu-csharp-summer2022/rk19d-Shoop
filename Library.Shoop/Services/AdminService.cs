@@ -1,4 +1,5 @@
 ﻿using Library.Shoop.Models;
+using Library.Shoop.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace Library.Shoop.Services
     public class AdminService
     {
 
+        private ListNavigator<Product> listNavigator;
+        
         // create a list of products for inventory
         private List<Product> inventoryList;
 
@@ -52,11 +55,13 @@ namespace Library.Shoop.Services
                 return current;
             }
         }
-
+        
         // public constructor that creates a new list of products for inventory
-        public AdminService()
+        private AdminService()
         {
             inventoryList = new List<Product>();
+
+            listNavigator = new ListNavigator<Product>(inventoryList);
         }
 
         // public method to add a new product to the inventory
@@ -82,15 +87,31 @@ namespace Library.Shoop.Services
         }
 
         // public method to update a product in the inventory
-        public void Update(Product product)
+        public void Update(Product? product)
         {
+
+            if (product == null)
+            {
+                return;
+            }
+            
             var oldProduct = inventoryList.FirstOrDefault(t => t.Id == product.Id);
 
             if (oldProduct != null)
             {
                 oldProduct.Name = product.Name;
                 oldProduct.Price = product.Price;
-                oldProduct.Quantity = product.Quantity;
+
+                if (oldProduct is ProductByQuantity)
+                {
+                    var oldProductByQuantity = oldProduct as ProductByQuantity;
+
+                    if (oldProductByQuantity != null)
+                    {
+                        Console.WriteLine("What is the quantity of the product?");
+                        oldProductByQuantity.Quantity = int.Parse(Console.ReadLine() ?? "0");
+                    }
+                }
             }
             else
             {
@@ -107,19 +128,20 @@ namespace Library.Shoop.Services
             }
         }
 
+        // stateless method - old
         // search the inventory by name or description
-        public void Search(string seachString)
-        {
-            var productToFind = inventoryList.FirstOrDefault(t => t.Name.ToLower().Contains(seachString.ToLower()) || t.Description.ToLower().Contains(seachString.ToLower()));
+        //public void Search(string seachString)
+        //{
+        //    var productToFind = inventoryList.FirstOrDefault(t => t.Name.ToLower().Contains(seachString.ToLower()) || t.Description.ToLower().Contains(seachString.ToLower()));
 
-            if (productToFind == null)
-            {
-                Console.WriteLine("No product found");
-            }
+        //    if (productToFind == null)
+        //    {
+        //        Console.WriteLine("No product found");
+        //    }
 
-            Console.WriteLine(productToFind);
-        }
-        
+        //    Console.WriteLine(productToFind);
+        //}
+
         // Admin Menu
         public static void AdminMenu()
         {
@@ -129,5 +151,56 @@ namespace Library.Shoop.Services
             Console.WriteLine("4. List Inventory");
             Console.WriteLine("5. Exit");
         }
+
+        // search the inventory by name or description and filter it by name, desc, or price
+        // Statefull method
+
+        private string _query;
+        private int _sort;
+
+        public IEnumerable<Product> Search(string query, int sort)
+        {
+            _query = query;
+            _sort = sort;
+            return ProcessedList;
+        }
+
+        public IEnumerable<Product> ProcessedList
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_query))
+                {
+                    return inventoryList;
+                }
+                
+                if (_sort == 1)
+                {
+                    return inventoryList
+                        .Where(i => string.IsNullOrEmpty(_query) || (i.Description.Contains(_query)
+                            || i.Name.Contains(_query)))
+                        .OrderBy(i => i.Name);
+                }
+                else if (_sort == 2)
+                {
+                    return inventoryList
+                        .Where(i => string.IsNullOrEmpty(_query) || (i.Description.Contains(_query)
+                            || i.Name.Contains(_query)))
+                        .OrderBy(i => i.TotalPrice);
+                }
+                else if (_sort == 3)
+                {
+                    return inventoryList
+                        .Where(i => string.IsNullOrEmpty(_query) || (i.Description.Contains(_query)
+                            || i.Name.Contains(_query)))
+                        .OrderBy(i => i.Price);
+                }
+                else
+                {
+                    return inventoryList;
+                }
+            }
+        }
+
     }
 }

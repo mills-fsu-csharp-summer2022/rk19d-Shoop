@@ -62,25 +62,58 @@ namespace Library.Shoop.Services
             cartList = new List<Product>();
             adminService = AdminService.Current;
         }
+        
 
         // public method to add a product to the cart
-        public void Add(Product product)
+        public void Add(Product product, int amount)
         {
             // only add the product if it is in stock
-
-            if (product.Quantity > 0)
+            if (product is ProductByQuantity)
             {
-                product.Id = NextId;
-                cartList.Add(product);
+                var quantityProduct = product as ProductByQuantity;
 
-                // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
-                if (product.Quantity > 1)
+                if (quantityProduct != null)
                 {
-                    product.Quantity--;
+                    if (quantityProduct.Quantity > 0)
+                    {
+                        product.Id = NextId;
+                        cartList.Add(product);
+                        quantityProduct.productAmount = amount;
+
+                        // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
+                        if (quantityProduct.Quantity > 1)
+                        {
+                            quantityProduct.Quantity -= amount;
+                        }
+                        else
+                        {
+                            adminService.Remove(product.Id);
+                        }
+                    }
                 }
-                else
+            }
+            else if (product is ProductByWeight)
+            {
+                var weightProduct = product as ProductByWeight;
+
+                if (weightProduct != null)
                 {
-                    adminService.Remove(product.Id);
+                    if (weightProduct.Weight > 0)
+                    {
+                        product.Id = NextId;
+                        cartList.Add(product);
+                        weightProduct.productAmount = amount;
+
+                        // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
+                        if (weightProduct.Weight > 1)
+                        {
+                            weightProduct.Weight-= amount;
+                        }
+                        else
+                        {
+                            adminService.Remove(product.Id);
+                        }
+                    }
                 }
             }
             else
@@ -102,17 +135,43 @@ namespace Library.Shoop.Services
             }
 
             // if the product is found then add it back to the inventory and remove it from the cart
-            if (productToDelete.Quantity == 1)
-            {
-                adminService.AddProduct(productToDelete);
-            }
-            else
-            {
-                productToDelete.Quantity++;
-            }
-            
-            cartList.Remove(productToDelete);
 
+            if (productToDelete is ProductByQuantity)
+            {
+                var quantityProduct = productToDelete as ProductByQuantity;
+
+                if (quantityProduct != null)
+                {
+                    if (quantityProduct.Quantity == 1)
+                    {
+                        adminService.AddProduct(productToDelete);
+                    }
+                    else
+                    {
+                        quantityProduct.Quantity++;
+                    }
+
+                    cartList.Remove(productToDelete);
+                }
+            }
+            else if (productToDelete is ProductByWeight)
+            {
+                var weightProduct = productToDelete as ProductByWeight;
+
+                if (weightProduct != null)
+                {
+                    if (weightProduct.Weight == 1)
+                    {
+                        adminService.AddProduct(productToDelete);
+                    }
+                    else
+                    {
+                        weightProduct.Weight++;
+                    }
+
+                    cartList.Remove(productToDelete);
+                }
+            }
         }
 
         // print the cart list
@@ -123,34 +182,38 @@ namespace Library.Shoop.Services
                 Console.WriteLine($"{product.Id} - {product.Name} - ${product.Price}");
             }
         }
-
+        
+        // Old Method
         // public method to search the cart
-        public void Search(string seachString)
-        {
-            // find the product in the cart using the name or description
+        //public void Search(string seachString)
+        //{
+        //    // find the product in the cart using the name or description
 
-            var productToFind = cartList.FirstOrDefault(t => t.Name.ToLower().Contains(seachString.ToLower()) || t.Description.ToLower().Contains(seachString.ToLower()));
+        //    var productToFind = cartList.FirstOrDefault(t => t.Name.ToLower().Contains(seachString.ToLower()) || t.Description.ToLower().Contains(seachString.ToLower()));
 
-            if (productToFind == null)
-            {
-                Console.WriteLine("No product found");
-            }
+        //    if (productToFind == null)
+        //    {
+        //        Console.WriteLine("No product found");
+        //    }
 
-            // if the product is found then print the product information
-            Console.WriteLine(productToFind);
-        }
+        //    // if the product is found then print the product information
+        //    Console.WriteLine(productToFind);
+        //}
 
         // public method to load the cart from a file
         public void Load(string fileName)
         {
             var productJson = File.ReadAllText(fileName);
-            cartList = JsonConvert.DeserializeObject<List<Product>>(productJson) ?? new List<Product>();
+            cartList = JsonConvert.DeserializeObject<List<Product>>
+                (productJson, new JsonSerializerSettings
+                    { TypeNameHandling = TypeNameHandling.All}) ?? new List<Product>();
         }
 
         // public method to save the cart to a file with the name of the file
         public void Save(string fileName)
         {
-            var productJson = JsonConvert.SerializeObject(cartList);
+            var productJson = JsonConvert.SerializeObject(cartList, new JsonSerializerSettings
+            { TypeNameHandling = TypeNameHandling.All });
             File.WriteAllText(fileName, productJson);
         }
 
@@ -158,14 +221,45 @@ namespace Library.Shoop.Services
         public void Checkout()
         {
             double subTotal = 0;
-            double taxAmount = 0;
-            double total = 0;
+            double taxAmount;
+            double total;
 
-            // calculate the sub total and tax amount
-            foreach (var product in cartList)
+
+            // calculate the sub total and tax amount accounting bogo
+            foreach (Product product in cartList)
             {
-                subTotal += product.Price;
+                if (product.IsBogo == true)
+                {
+                    if (product is ProductByQuantity)
+                    {
+                        var quantityProduct = product as ProductByQuantity;
+
+                        if (quantityProduct != null)
+                        {
+                            var totalBogoQuan = (quantityProduct.productAmount / 2) + (quantityProduct.productAmount % 2);
+
+                            subTotal += quantityProduct.Price * totalBogoQuan;
+                        }
+
+                    }
+                    else if (product is ProductByWeight)
+                    {
+                        var weightProduct = product as ProductByWeight;
+
+                        if (weightProduct != null)
+                        {
+                            var totalBogoWeight = (weightProduct.productAmount / 2) + (weightProduct.productAmount % 2);
+
+                            subTotal += weightProduct.Price * totalBogoWeight;
+                        }
+                    }
+                }
+                else
+                {
+                    subTotal += product.Price;
+                }
             }
+
 
             taxAmount = subTotal * 0.07;
             total = subTotal + taxAmount;
@@ -187,6 +281,56 @@ namespace Library.Shoop.Services
             Console.WriteLine("6. Load Cart");
             Console.WriteLine("7. Checkout");
             Console.WriteLine("8. Exit");
+        }
+
+        // search the inventory by name or description and filter it by name, desc, or price
+        // Statefull method
+
+        private string _query;
+        private int _sort;
+
+        public IEnumerable<Product> Search(string query, int sort)
+        {
+            _query = query;
+            _sort = sort;
+            return ProcessedList;
+        }
+
+        public IEnumerable<Product> ProcessedList
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_query))
+                {
+                    return cartList;
+                }
+
+                if (_sort == 1)
+                {
+                    return cartList
+                        .Where(i => string.IsNullOrEmpty(_query) || (i.Description.Contains(_query)
+                            || i.Name.Contains(_query)))
+                        .OrderBy(i => i.Name);
+                }
+                else if (_sort == 2)
+                {
+                    return cartList
+                        .Where(i => string.IsNullOrEmpty(_query) || (i.Description.Contains(_query)
+                            || i.Name.Contains(_query)))
+                        .OrderBy(i => i.TotalPrice);
+                }
+                else if (_sort == 3)
+                {
+                    return cartList
+                        .Where(i => string.IsNullOrEmpty(_query) || (i.Description.Contains(_query)
+                            || i.Name.Contains(_query)))
+                        .OrderBy(i => i.Price);
+                }
+                else
+                {
+                    return cartList;
+                }
+            }
         }
     }
 }

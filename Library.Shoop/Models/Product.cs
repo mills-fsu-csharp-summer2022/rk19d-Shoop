@@ -4,27 +4,19 @@
     {
         public string Name { get; set; }
         public string Description { get; set; }
+
         public double Price { get; set; }
-        public int Quantity { get; set; }
         public int Id { get; set; }
-        public double TotalPrice
-        {
-            get
-            {
-                return Price * Quantity;
-            }
-        }
+
+        public bool IsBogo { get; set; }
+        public virtual double TotalPrice { get;  set; }
+
+        public int productAmount { get; set; }
 
         public Product()
         {
             Name = "";
             Description = "";
         }
-
-        public override string ToString()
-        {
-            return $"{Id} - {Name} - {Description} - {Price} - {Quantity} - ${TotalPrice}";
-        }
-
     }
 }

@@ -23,14 +23,14 @@ namespace Shoop // Note: actual namespace depends on the project name.
                 Console.WriteLine("0: Exit");
 
                 response = int.Parse(Console.ReadLine() ?? "1");
-                
+
                 // USER SECTION 
                 if (response == 1)
                 {
                     Console.WriteLine("You Chose User");
                     var user = UserService.Current; // create a instance of an user
                     int input;
-                    
+
                     Console.WriteLine("\nWelcome to Shoop!");
 
                     do
@@ -49,9 +49,12 @@ namespace Shoop // Note: actual namespace depends on the project name.
 
                             var productToAdd = AdminService.Current.Inventory.FirstOrDefault(t => t.Id == itemId); // look for the product in the inventory
 
+                            Console.WriteLine("Enter the quantity or weight of the item you would like to add to your cart");
+                            int amount = int.Parse(Console.ReadLine() ?? "1"); // get the quantity from user to add to cart defaulted to 1 
+
                             if (productToAdd != null) // if the product is found add it to the cart
                             {
-                                user.Add(productToAdd);
+                                user.Add(productToAdd, amount);
                             }
                             else // if the product is not found, show a message
                             {
@@ -73,7 +76,16 @@ namespace Shoop // Note: actual namespace depends on the project name.
                         {
                             Console.WriteLine("You chose to View Cart"); // show the products in the cart
 
-                            user.ListCart();
+                            Console.WriteLine("Do you want to search for a specific item? if not, leave blank and enter");
+                            string searchItem = Console.ReadLine() ?? "";
+
+                            Console.WriteLine("Enter the sorting method (1: Name, 2: Description, 3: Price)");
+                            int sort = int.TryParse(Console.ReadLine() ?? "1", out sort) ? sort : 1;
+
+                            foreach (var product in user.Search(searchItem, sort))
+                            {
+                                Console.WriteLine(product);
+                            }
 
                         }
                         else if (input == 4)
@@ -81,7 +93,7 @@ namespace Shoop // Note: actual namespace depends on the project name.
                             Console.WriteLine("You chose to Search the Cart or Inventory");
 
                             // ask the user if they want to search the cart or inventory
-                            Console.WriteLine("1: Search the Cart"); 
+                            Console.WriteLine("1: Search the Cart");
                             Console.WriteLine("2: Search the Inventory");
 
                             int search = int.Parse(Console.ReadLine() ?? "1");
@@ -91,11 +103,17 @@ namespace Shoop // Note: actual namespace depends on the project name.
                             {
                                 Console.WriteLine("You chose to Search the Cart");
 
-                                Console.WriteLine("Enter the name or description of the item you would like to search for");
-                                string searchItem = Console.ReadLine() ?? "1";
+                                Console.WriteLine("Do you want to search for a specific item? if not, leave blank and enter");
+                                string searchItem = Console.ReadLine() ?? "";
 
-                                // call the search method from the user service and pass in the search string
-                                user.Search(searchItem);
+                                Console.WriteLine("Enter the sorting method (1: Name, 2: Description, 3: Price)");
+                                int sort = int.TryParse(Console.ReadLine() ?? "1", out sort) ? sort : 1;
+
+                                // call the admin search method from the admin service and pass in the search string and sort method
+                                foreach (var product in user.Search(searchItem, sort))
+                                {
+                                    Console.WriteLine(product);
+                                }
                             }
                             else if (search == 2)
                             {
@@ -103,12 +121,17 @@ namespace Shoop // Note: actual namespace depends on the project name.
                                 // if the user chose to search the inventory, ask the user for name or description
                                 Console.WriteLine("You chose to Search the Inventory");
 
-                                Console.WriteLine("Enter the name or description of the item you would like to search for");
+                                Console.WriteLine("Enter the name of the item you would like to search for");
                                 string searchItem = Console.ReadLine() ?? "1";
 
+                                Console.WriteLine("Enter the sorting method (1: Name, 2: Total Price, 3: Unit Price)");
+                                int sort = int.TryParse(Console.ReadLine() ?? "1", out sort) ? sort : 1;
 
-                                // call the admin search method from the admin service and pass in the search string
-                                AdminService.Current.Search(searchItem);
+                                // call the admin search method from the admin service and pass in the search string and sort method
+                                foreach (var product in AdminService.Current.Search(searchItem, sort))
+                                {
+                                    Console.WriteLine(product);
+                                }
                             }
                         }
                         else if (input == 5)
@@ -147,7 +170,8 @@ namespace Shoop // Note: actual namespace depends on the project name.
                                 // if the user chose to checkout exit program.
                                 if (checkout == 1)
                                 {
-                                    Console.WriteLine("Thank you for shopping with us!");
+                                    paymentInformation();
+                                    Console.WriteLine("\nThank you for shopping with us!");
                                     Environment.Exit(0);
                                 }
                                 else if (checkout == 2)
@@ -187,19 +211,37 @@ namespace Shoop // Note: actual namespace depends on the project name.
                         if (adminInput == 1)
                         {
                             // add a new item to inventory
-                            Console.WriteLine("You chose to Add to Inventory");
+                            Console.WriteLine("Do you want to add product by quantity or weight?");
+                            Console.WriteLine("1: Quantity");
+                            Console.WriteLine("2: Weight");
+
+                            int addChoice = int.Parse(Console.ReadLine() ?? "0");
+
+                            Product? newProduct = null;
+
+                            if (addChoice == 1)
+                            {
+                                newProduct = new ProductByQuantity();
+                            }
+                            else if (addChoice == 2)
+                            {
+                                newProduct = new ProductByWeight();
+                            }
 
                             // create a product and send it to the fillProduct function and then send it to the AddProduct method in the admin service
-                            var newProduct = new Product();
                             fillProduct(newProduct);
-                            admin.AddProduct(newProduct);
+
+                            if (newProduct != null)
+                            {
+                                admin.AddProduct(newProduct);
+                            }
                         }
                         else if (adminInput == 2)
                         {
                             // remove an item from inventory
                             Console.WriteLine("You chose to Remove from Inventory");
                             Console.WriteLine("Enter ID of product to delete");
-                            
+
                             admin.ListInventory(); // list the inventory
 
                             // get the product id from the user and send it to the Remove method in the admin service
@@ -235,7 +277,19 @@ namespace Shoop // Note: actual namespace depends on the project name.
                         {
                             // show the inventory
                             Console.WriteLine("You chose to List Inventory");
-                            admin.ListInventory();
+
+                            Console.WriteLine("Do you want to search for a specific item? if not, leave blank and enter");
+                            string searchItem = Console.ReadLine() ?? "";
+
+                            Console.WriteLine("Enter the sorting method (1: Name, 2: Total Price, 3: Unit Price)");
+
+                            int sort = int.TryParse(Console.ReadLine() ?? "1", out sort) ? sort : 1;
+
+                            // call the admin search method from the admin service and pass in the search string and sort method
+                            foreach (var product in admin.Search(searchItem, sort))
+                            {
+                                Console.WriteLine(product);
+                            }
                         }
                         else if (adminInput == 5)
                         {
@@ -274,11 +328,112 @@ namespace Shoop // Note: actual namespace depends on the project name.
                 Console.WriteLine("What is the description of the product?");
                 product.Description = Console.ReadLine() ?? string.Empty;
 
-                Console.WriteLine("What is the price of the product?");
+                Console.WriteLine("What is the price of the product (1 quantity or 1 LB)?");
                 product.Price = double.Parse(Console.ReadLine() ?? "0");
 
-                Console.WriteLine("What is the quantity of the product?");
-                product.Quantity = int.Parse(Console.ReadLine() ?? "0");
+
+                if (product is ProductByQuantity)
+                {
+                    var quantityProduct = product as ProductByQuantity;
+
+                    if (quantityProduct != null)
+                    {
+                        Console.WriteLine("What is the quantity of the product?");
+                        quantityProduct.Quantity = int.Parse(Console.ReadLine() ?? "0");
+                    }
+
+                }
+                else if (product is ProductByWeight)
+                {
+                    var weightProduct = product as ProductByWeight;
+
+                    if (weightProduct != null)
+                    {
+                        Console.WriteLine("What is the weight of the product?");
+                        weightProduct.Weight = double.Parse(Console.ReadLine() ?? "0");
+                    }
+                }
+
+                Console.WriteLine("\nIs the Product BOGO?");
+                Console.WriteLine("1: Yes");
+                Console.WriteLine("2: No");
+
+                var bogo = int.Parse(Console.ReadLine() ?? "0");
+
+                if (bogo == 1)
+                {
+                    product.IsBogo = true;
+                }
+                else if (bogo == 2)
+                {
+                    product.IsBogo = false;
+                }
+            }
+
+            static void paymentInformation()
+            {
+                bool checker = true;
+
+                Console.WriteLine("\nPlease enter your name");
+                var name = Console.ReadLine() ?? string.Empty;
+
+                Console.WriteLine("Please enter your address");
+                var address = Console.ReadLine() ?? string.Empty;
+
+                // ask for credit card number, expiration date and cvv and validate it
+
+                do
+                {
+                    Console.WriteLine("Please enter your credit card number");
+                    var creditCardNumber = Console.ReadLine() ?? string.Empty;
+
+                    if (creditCardNumber.Length != 16)
+                    {
+                        Console.WriteLine("Credit card number is invalid");
+                        checker = true;
+                    }
+                    else
+                    {
+                        checker = false;
+                    }
+
+                } while (checker);
+
+                do
+                {
+                    Console.WriteLine("Please enter your credit card expiration date");
+                    var expirationDate = Console.ReadLine() ?? string.Empty;
+
+                    var dateTime = DateTime.Parse(expirationDate);
+
+                    if (dateTime.Year < DateTime.Now.Year)
+                    {
+                        Console.WriteLine("Credit card is expired");
+                        checker = true;
+                    }
+                    else
+                    {
+                        checker = false;
+                    }
+
+                } while (checker);
+
+                do
+                {
+                    Console.WriteLine("Please enter your credit card CVV");
+                    var cvv = Console.ReadLine() ?? string.Empty;
+
+                    if (cvv.Length != 3)
+                    {
+                        Console.WriteLine("CVV is invalid");
+                        checker = true;
+                    }
+                    else
+                    {
+                        checker = false;
+                    }
+
+                } while (checker);
             }
         }
     }
