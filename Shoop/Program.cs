@@ -106,7 +106,7 @@ namespace Shoop // Note: actual namespace depends on the project name.
                                 Console.WriteLine("Do you want to search for a specific item? if not, leave blank and enter");
                                 string searchItem = Console.ReadLine() ?? "";
 
-                                Console.WriteLine("Enter the sorting method (1: Name, 2: Description, 3: Price)");
+                                Console.WriteLine("Enter the sorting method (1: Name, 2: Total Price, 3: Price)");
                                 int sort = int.TryParse(Console.ReadLine() ?? "1", out sort) ? sort : 1;
 
                                 // call the admin search method from the admin service and pass in the search string and sort method
