@@ -1,0 +1,71 @@
+﻿<ContentDialog
+    x:Class="Shoop.UWP.Dialogs.QuantityDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:local="using:Shoop.UWP.Dialogs"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Product"
+    PrimaryButtonText="Ok"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Name"></TextBlock>
+            <TextBox Grid.Column="1" Text="{Binding Path=Name, Mode=TwoWay}"></TextBox>
+        </Grid>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Description"></TextBlock>
+            <TextBox Grid.Column="1" Text="{Binding Path=Description, Mode=TwoWay}"></TextBox>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Price"></TextBlock>
+            
+            
+            <!--<TextBox Grid.Column="1" Text="{Binding Path=Price, Mode=TwoWay}"></TextBox>-->
+            <muxc:NumberBox x:Name="FormattedNumberBox" Grid.Column="1"  PlaceholderText="0.00" Text="{Binding Path=Price, Mode=TwoWay}"/>
+
+            
+        </Grid>
+        <!--<Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <muxc:NumberBox x:Name="NumberBoxSpinButtonPlacementExample"
+                Header="Quantity"
+                Value="1"
+                SpinButtonPlacementMode="Inline"
+                Minimum="1"
+                Text="{Binding Path=productAmount, Mode=TwoWay}"
+                SmallChange="1"
+                LargeChange="1" />
+
+        </Grid>-->
+    </Grid>
+</ContentDialog>
+
+
