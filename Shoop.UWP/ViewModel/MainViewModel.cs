@@ -20,6 +20,7 @@ namespace Shoop.UWP.ViewModel
         public Product SelectedProduct { get; set; }
 
         private AdminService _productService;
+        private UserService _cartService;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -50,10 +51,33 @@ namespace Shoop.UWP.ViewModel
                 }
             }
         }
+        public ObservableCollection<Product> Cart
+        {
+            get
+            {
+                if (_productService == null)
+                {
+                    return new ObservableCollection<Product>();
+                }
+
+                if (string.IsNullOrEmpty(Query))
+                {
+                    return new ObservableCollection<Product>(_cartService.Cart);
+                }
+                else
+                {
+                    return new ObservableCollection<Product>(_cartService.Cart.Where(i => i.Name.ToLower().Contains(Query.ToLower())
+                        || i.Description.ToLower().Contains(Query.ToLower())
+                        ));
+
+                }
+            }
+        }
 
         public MainViewModel()
         {
             _productService = AdminService.Current;
+            _cartService = UserService.Current;
         }
 
         public async Task Add(ProductType pType)
@@ -96,7 +120,21 @@ namespace Shoop.UWP.ViewModel
         {
             if (SelectedProduct != null)
             {
-                var diag = new QuantityDialog(SelectedProduct);
+                ContentDialog diag = null;
+                
+                if (SelectedProduct is ProductByQuantity)
+                {
+                    diag = new QuantityDialog(SelectedProduct);
+                }
+                else if (SelectedProduct is ProductByWeight)
+                {
+                    diag = new WeightDialog(SelectedProduct);
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+
                 await diag.ShowAsync();
                 NotifyPropertyChanged("Products");
             }
@@ -105,13 +143,12 @@ namespace Shoop.UWP.ViewModel
         public void Save()
         {
 
-            _productService.Save();
+            _cartService.Save();
         }
 
         public void Load()
         {
-
-            _productService.Load();
+            _cartService.Load();
             NotifyPropertyChanged("Products");
         }
 
@@ -119,9 +156,40 @@ namespace Shoop.UWP.ViewModel
         {
             NotifyPropertyChanged("Products");
         }
+        public void CartRefresh()
+        {
+            NotifyPropertyChanged("Cart");
+        }
 
-        
-        
+        public void AddToCart()
+        {
+            _cartService.Add(SelectedProduct,1);
+            NotifyPropertyChanged("Cart");
+            NotifyPropertyChanged("Products");
+        }
+
+        public void DeleteCart()
+        {
+            var id = SelectedProduct?.Id ?? -1;
+
+            if (id >= 1)
+            {
+                _cartService.Delete(SelectedProduct.Id);
+            }
+
+            NotifyPropertyChanged("Cart");
+        }
+
+        public async void Checkout()
+        {
+
+            _cartService.Checkout();
+
+            ContentDialog diag = new CheckoutDialog();
+            await diag.ShowAsync();
+            NotifyPropertyChanged("Cart");
+        }
+
     }
     public enum ProductType
     {

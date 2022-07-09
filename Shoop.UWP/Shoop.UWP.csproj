@@ -119,6 +119,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="cart.xaml.cs">
+      <DependentUpon>cart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\CheckoutDialog.xaml.cs">
+      <DependentUpon>CheckoutDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\QuantityDialog.xaml.cs">
       <DependentUpon>QuantityDialog.xaml</DependentUpon>
     </Compile>
@@ -152,6 +158,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="cart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CheckoutDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\QuantityDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

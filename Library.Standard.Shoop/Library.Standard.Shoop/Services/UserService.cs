@@ -12,7 +12,7 @@ namespace Library.Shoop.Services
     public class UserService
     {
 
-        private string cartPersistPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}// SaveData.json";
+        private string persistPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}";
 
         // create a list of products called cartList
         private List<Product> cartList;
@@ -83,16 +83,16 @@ namespace Library.Shoop.Services
 
                 if (quantityProduct != null)
                 {
-                    if (quantityProduct.Quantity > 0)
+                    if (quantityProduct.typeOfProduct > 0)
                     {
                         product.Id = NextId;
                         cartList.Add(product);
                         quantityProduct.productAmount = amount;
 
                         // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
-                        if (quantityProduct.Quantity > 1)
+                        if (quantityProduct.typeOfProduct > 1)
                         {
-                            quantityProduct.Quantity -= amount;
+                            quantityProduct.typeOfProduct -= amount;
                         }
                         else
                         {
@@ -107,16 +107,16 @@ namespace Library.Shoop.Services
 
                 if (weightProduct != null)
                 {
-                    if (weightProduct.Weight > 0)
+                    if (weightProduct.typeOfProduct > 0)
                     {
                         product.Id = NextId;
                         cartList.Add(product);
                         weightProduct.productAmount = amount;
 
                         // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
-                        if (weightProduct.Weight > 1)
+                        if (weightProduct.typeOfProduct > 1)
                         {
-                            weightProduct.Weight-= amount;
+                            weightProduct.typeOfProduct -= amount;
                         }
                         else
                         {
@@ -151,13 +151,13 @@ namespace Library.Shoop.Services
 
                 if (quantityProduct != null)
                 {
-                    if (quantityProduct.Quantity == 1)
+                    if (quantityProduct.typeOfProduct == 1)
                     {
                         adminService.AddProduct(productToDelete);
                     }
                     else
                     {
-                        quantityProduct.Quantity++;
+                        quantityProduct.typeOfProduct++;
                     }
 
                     cartList.Remove(productToDelete);
@@ -169,13 +169,13 @@ namespace Library.Shoop.Services
 
                 if (weightProduct != null)
                 {
-                    if (weightProduct.Weight == 1)
+                    if (weightProduct.typeOfProduct == 1)
                     {
                         adminService.AddProduct(productToDelete);
                     }
                     else
                     {
-                        weightProduct.Weight++;
+                        weightProduct.typeOfProduct++;
                     }
 
                     cartList.Remove(productToDelete);
@@ -189,6 +189,14 @@ namespace Library.Shoop.Services
             foreach (var product in cartList)
             {
                 Console.WriteLine($"{product.Id} - {product.Name} - ${product.Price}");
+            }
+        }
+
+        public void DeleteCart()
+        {
+            foreach (var product in cartList.ToList())
+            {
+               cartList.Remove(product);
             }
         }
 
@@ -215,7 +223,11 @@ namespace Library.Shoop.Services
 
             if (string.IsNullOrEmpty(fileName))
             {
-                fileName = cartPersistPath;
+                fileName = $"{persistPath}\\SaveData.json";
+            }
+            else
+            {
+                fileName = $"{persistPath}\\{fileName}.json";
             }
 
             var productJson = File.ReadAllText(fileName);
@@ -230,7 +242,11 @@ namespace Library.Shoop.Services
 
             if (string.IsNullOrEmpty(fileName))
             {
-                fileName = cartPersistPath;
+                fileName = $"{persistPath}\\SaveData.json";
+            }
+            else
+            {
+                fileName = $"{persistPath}\\{fileName}.json";
             }
 
             var productJson = JsonConvert.SerializeObject(cartList, new JsonSerializerSettings
@@ -272,7 +288,7 @@ namespace Library.Shoop.Services
                             var totalBogoWeight = (weightProduct.productAmount / 2) + (weightProduct.productAmount % 2);
 
                             subTotal += weightProduct.Price * totalBogoWeight;
-                        }
+                        }   
                     }
                 }
                 else
@@ -281,9 +297,9 @@ namespace Library.Shoop.Services
                 }
             }
 
-
             taxAmount = subTotal * 0.07;
             total = subTotal + taxAmount;
+            
 
             Console.WriteLine("Subtotal: " + subTotal);
             Console.WriteLine("Tax: " + taxAmount);

@@ -1,9 +1,6 @@
-﻿using Library.Shoop.Models;
-using Library.Shoop.Services;
-using Shoop.UWP.ViewModel;
+﻿using Library.Shoop.Services;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -21,28 +18,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Shoop.UWP.Dialogs
 {
-    public sealed partial class QuantityDialog : ContentDialog
-    {      
-        public QuantityDialog()
+    public sealed partial class CheckoutDialog : ContentDialog
+    {
+        public CheckoutDialog()
         {
             this.InitializeComponent();
-            this.DataContext = new ProductByQuantity();
-        }
-
-        public QuantityDialog(Product selectedItem)
-        {
-            this.InitializeComponent();
-            this.DataContext = selectedItem;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-
-            AdminService.Current.AddProduct(DataContext as ProductByQuantity);
+            UserService.Current.DeleteCart();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+
         }
     }
 }

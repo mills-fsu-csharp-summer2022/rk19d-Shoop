@@ -8,19 +8,21 @@ namespace Library.Shoop.Models
 {
     public partial class ProductByWeight : Product
     {
-        public double Weight { get; set; }
+        public override int typeOfProduct { get; set; }
+
+        public bool Bogo { get; set; }
 
         public override double TotalPrice
         {
             get
             {
-                return Price * Weight;
+                return Price * typeOfProduct;
             }
         }
 
         public override string ToString()
         {
-            return $"{Id} - {Name} - {Description} - ${Price} - {Weight}LB - ${TotalPrice} - IsBogo: {IsBogo}";
+            return $"{Id} - {Name} - {Description} - ${Price} - {typeOfProduct}LB - ${TotalPrice} - IsBogo: {IsBogo}";
         }
     }
 }

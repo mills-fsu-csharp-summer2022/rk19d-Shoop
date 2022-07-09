@@ -75,5 +75,20 @@ namespace Shoop.UWP
         {
             (DataContext as MainViewModel).Load();
         }
+
+        private void AddCart_Click(object sender, RoutedEventArgs e)
+        {
+            var dc = DataContext as MainViewModel;
+
+            if (dc != null)
+            {
+                dc.AddToCart();
+            }
+        }
+
+        private void Checkout_Click(object sender, RoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(cart));
+        }
     }
 }

@@ -7,7 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Product"
+    Title="Quantity Product"
     PrimaryButtonText="Ok"
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
@@ -19,13 +19,14 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Name"></TextBlock>
+            <TextBlock Grid.Column="0" Text="Name" VerticalAlignment="Center"></TextBlock>
             <TextBox Grid.Column="1" Text="{Binding Path=Name, Mode=TwoWay}"></TextBox>
         </Grid>
         <Grid Grid.Row="1">
@@ -33,7 +34,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Description"></TextBlock>
+            <TextBlock Grid.Column="0" Text="Description" VerticalAlignment="Center"></TextBlock>
             <TextBox Grid.Column="1" Text="{Binding Path=Description, Mode=TwoWay}"></TextBox>
         </Grid>
         <Grid Grid.Row="2">
@@ -41,30 +42,35 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Price"></TextBlock>
-            
-            
-            <!--<TextBox Grid.Column="1" Text="{Binding Path=Price, Mode=TwoWay}"></TextBox>-->
-            <muxc:NumberBox x:Name="FormattedNumberBox" Grid.Column="1"  PlaceholderText="0.00" Text="{Binding Path=Price, Mode=TwoWay}"/>
+            <TextBlock Grid.Column="0" Text="Price" VerticalAlignment="Center"></TextBlock>
 
-            
+            <muxc:NumberBox Grid.Column="1" PlaceholderText="0.00" Text="{Binding Path=Price, Mode=TwoWay}"/>
+
         </Grid>
-        <!--<Grid Grid.Row="4">
+
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            
-            <muxc:NumberBox x:Name="NumberBoxSpinButtonPlacementExample"
-                Header="Quantity"
-                Value="1"
-                SpinButtonPlacementMode="Inline"
-                Minimum="1"
-                Text="{Binding Path=productAmount, Mode=TwoWay}"
-                SmallChange="1"
-                LargeChange="1" />
 
-        </Grid>-->
+            <TextBlock Grid.Column="0" Text="Quantity" VerticalAlignment="Center"></TextBlock>
+
+            <muxc:NumberBox Grid.Column="1" PlaceholderText="0" Text="{Binding Path=typeOfProduct, Mode=TwoWay}"/>
+            
+        </Grid>
+
+        <Grid Grid.Row="4">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0" Text="BOGO" VerticalAlignment="Center" ></TextBlock>
+            <CheckBox Grid.Column="1" IsChecked="{Binding Path=Bogo, Mode=TwoWay}"></CheckBox>
+
+        </Grid>
     </Grid>
 </ContentDialog>
 

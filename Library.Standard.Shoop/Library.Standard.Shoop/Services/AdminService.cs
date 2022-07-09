@@ -13,7 +13,6 @@ namespace Library.Shoop.Services
     public class AdminService
     {
 
-
         private string persistPath = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}"; 
 
         private ListNavigator<Product> listNavigator;
@@ -76,6 +75,10 @@ namespace Library.Shoop.Services
                 product.Id = NextId;
                 inventoryList.Add(product);
             }
+            else
+            {
+                inventoryList.Add(product);
+            }
         }
 
         // public method to remove a product from the inventory
@@ -116,7 +119,7 @@ namespace Library.Shoop.Services
                     if (oldProductByQuantity != null)
                     {
                         Console.WriteLine("What is the quantity of the product?");
-                        oldProductByQuantity.Quantity = int.Parse(Console.ReadLine() ?? "0");
+                        oldProductByQuantity.typeOfProduct = int.Parse(Console.ReadLine() ?? "0");
                     }
                 }
             }

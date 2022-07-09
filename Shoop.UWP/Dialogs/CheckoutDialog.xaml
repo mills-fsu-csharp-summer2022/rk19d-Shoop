@@ -1,5 +1,5 @@
 ﻿<ContentDialog
-    x:Class="Shoop.UWP.Dialogs.WeightDialog"
+    x:Class="Shoop.UWP.Dialogs.CheckoutDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Shoop.UWP.Dialogs"
@@ -7,13 +7,14 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Weight Product"
-    PrimaryButtonText="Ok"
+    Title="Checkout"
+    PrimaryButtonText="Confirm"
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <Grid>
+       
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
@@ -21,42 +22,51 @@
             <RowDefinition/>
             <RowDefinition/>
         </Grid.RowDefinitions>
+
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Name" VerticalAlignment="Center"></TextBlock>
-            <TextBox Grid.Column="1" Text="{Binding Path=Name, Mode=TwoWay}"></TextBox>
-        </Grid>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Description" VerticalAlignment="Center"></TextBlock>
-            <TextBox Grid.Column="1" Text="{Binding Path=Description, Mode=TwoWay}"></TextBox>
-        </Grid>
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="Price" VerticalAlignment="Center"></TextBlock>
 
-            <muxc:NumberBox Grid.Column="1" PlaceholderText="0.00" Text="{Binding Path=Price, Mode=TwoWay}"/>
+            <TextBlock Text="Total Price: " Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" Text="{Binding Path=TotalPrice, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+        </Grid>
+
+        <Grid Grid.Row="1">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Shipping Address: " Grid.Column="0" VerticalAlignment="Center"/>
+            <TextBox Grid.Column="1"/>
+
+        </Grid>
+
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Credit Card: " Grid.Column="0" VerticalAlignment="Center"/>
+            <muxc:NumberBox Grid.Column="1"/>
 
         </Grid>
 
         <Grid Grid.Row="3">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="Weight" VerticalAlignment="Center"></TextBlock>
-
-            <muxc:NumberBox Grid.Column="1" PlaceholderText="0" Text="{Binding Path=typeOfProduct, Mode=TwoWay}"/>
+            <TextBlock Text="CVC: " Grid.Column="0" VerticalAlignment="Center"/>
+            <muxc:NumberBox Grid.Column="1" />
 
         </Grid>
 
@@ -67,9 +77,13 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="BOGO" VerticalAlignment="Center"></TextBlock>
-            <CheckBox Grid.Column="1" IsChecked="{Binding Path=Bogo, Mode=TwoWay}"></CheckBox>
+            <TextBlock Text="Expiration: " Grid.Column="0" VerticalAlignment="Center"/>
+            <CalendarDatePicker Grid.Column="1"/>
 
         </Grid>
+
+
+
+
     </Grid>
 </ContentDialog>

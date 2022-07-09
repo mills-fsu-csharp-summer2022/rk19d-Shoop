@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="Shoop.UWP.MainPage"
+    x:Class="Shoop.UWP.cart"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Shoop.UWP"
@@ -10,26 +10,39 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition/> <!--Search Bar-->
-            <RowDefinition Height="20*"/> <!--List View-->
-            <RowDefinition/> <!--Button Bar-->
+            <RowDefinition/>
+            <!--Search Bar-->
+            <RowDefinition Height="20*"/>
+            <!--List View-->
+            <RowDefinition/>
+            <!--Button Bar-->
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="2*"/>
                 <ColumnDefinition Width="12*"/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" Text="{Binding Path=Query, Mode=TwoWay}"></TextBox>
-            <Button Style="{StaticResource AccentButtonStyle}" Grid.Column="1" Content="Search" HorizontalAlignment="Stretch" Click="Search_Click"></Button>
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button Style="{StaticResource AccentButtonStyle}" Grid.Column="0" Content="Save" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="Save_Click"></Button>
+                <Button Style="{StaticResource AccentButtonStyle}" Grid.Column="1" Content="Load" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="Load_Click"></Button>
+            </Grid>
+
+            <TextBox Grid.Column="1" Text="{Binding Path=Query, Mode=TwoWay}"></TextBox>
+            <Button Style="{StaticResource AccentButtonStyle}" Grid.Column="2" Content="Search" HorizontalAlignment="Stretch" Click="Search_Click"></Button>
         </Grid>
         <Grid Grid.Row="1">
-            <ListBox ItemsSource="{Binding Path=Products, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SelectedProduct, Mode=TwoWay}">
+            <ListBox ItemsSource="{Binding Path=Cart, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=SelectedProduct, Mode=TwoWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
                                 <RowDefinition/>
@@ -60,19 +73,7 @@
                                 </TextBlock>
                             </Grid>
 
-                            <Grid Grid.Row ="3">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock Grid.Column="0" Text="Quantity:"/>
-                                <TextBlock Grid.Column="1" Text=" ">
-                                    <Run Text="{Binding Path=typeOfProduct, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                </TextBlock>
-                            </Grid>
-
-                            <Grid Grid.Row="4">
+                            <Grid Grid.Row="3">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
@@ -84,7 +85,7 @@
                                 </TextBlock>
                             </Grid>
 
-                            <Grid Grid.Row="5">
+                            <Grid Grid.Row="4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition/>
                                     <ColumnDefinition/>
@@ -102,39 +103,19 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Button Content="Add Quantity Product" Grid.Column="0" HorizontalAlignment="Stretch" Click="Add_Quantity_Click"></Button>
-                <Button Content="Add Weight Product" Grid.Column="1" HorizontalAlignment="Stretch" Click="Add_Weight_Click"></Button>
-
-            </Grid>
-
-            <Grid Grid.Column="1">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
-                <Button Content="Edit Product" Grid.Column="0" HorizontalAlignment="Stretch" Click="Edit_Click"></Button>
-                <Button Content="Delete Product" Grid.Column="1" HorizontalAlignment="Stretch" Click="Delete_Click"></Button>
-            </Grid>
-
-            <Grid Grid.Column="2">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Button Content="Add to Cart" Grid.Column="0" HorizontalAlignment="Stretch" Click="AddCart_Click"></Button>
-                <Button Style="{StaticResource AccentButtonStyle}" Content="Cart" Grid.Column="1" HorizontalAlignment="Stretch" Click="Checkout_Click"></Button>
+                <Button Content="Go Back" Grid.Column="0" HorizontalAlignment="Stretch" Click="Back_Click"></Button>
+                <Button Content="Delete from Cart" Grid.Column="1" HorizontalAlignment="Stretch" Click="Delete_Cart"></Button>
+                <Button Style="{StaticResource AccentButtonStyle}" Content="Checkout" Grid.Column="2" HorizontalAlignment="Stretch" Click="Pay_Click"></Button>
+                
             </Grid>
         </Grid>
     </Grid>

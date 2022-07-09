@@ -9,7 +9,11 @@
         public int Id { get; set; }
 
         public bool IsBogo { get; set; }
-        public virtual double TotalPrice { get;  set; }
+        public virtual double TotalPrice { get; set; }
+
+        public double FinalPrice { get; set; }
+
+        public virtual int typeOfProduct { get; set; }
 
         public int productAmount { get; set; }
 

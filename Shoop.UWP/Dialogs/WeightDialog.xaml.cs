@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Library.Shoop.Models;
+using Library.Shoop.Services;
+using Shoop.UWP.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,10 +25,20 @@ namespace Shoop.UWP.Dialogs
         public WeightDialog()
         {
             this.InitializeComponent();
+            this.DataContext = new ProductByWeight();
+        }
+        public WeightDialog(Product selectedItem)
+        {
+            this.InitializeComponent();
+            this.DataContext = selectedItem;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var viewModel = DataContext as ProductViewModel;
+
+
+            AdminService.Current.AddProduct(DataContext as ProductByWeight);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
