@@ -75,10 +75,10 @@ namespace Library.Shoop.Services
                 product.Id = NextId;
                 inventoryList.Add(product);
             }
-            else
-            {
-                inventoryList.Add(product);
-            }
+            //else
+            //{
+            //    inventoryList.Add(product);
+            //}
         }
 
         // public method to remove a product from the inventory

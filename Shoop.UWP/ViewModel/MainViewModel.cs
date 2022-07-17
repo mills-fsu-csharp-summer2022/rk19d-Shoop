@@ -149,7 +149,7 @@ namespace Shoop.UWP.ViewModel
         public void Load()
         {
             _cartService.Load();
-            NotifyPropertyChanged("Products");
+            NotifyPropertyChanged("Cart");
         }
 
         public void Refresh()
