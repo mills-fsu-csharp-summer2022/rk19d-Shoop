@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shoop.API", "Shoop.API\Shoop.API.csproj", "{728AD185-DF72-4D3B-A92B-C843E8C04775}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{728AD185-DF72-4D3B-A92B-C843E8C04775}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{728AD185-DF72-4D3B-A92B-C843E8C04775}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{728AD185-DF72-4D3B-A92B-C843E8C04775}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{728AD185-DF72-4D3B-A92B-C843E8C04775}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89A3C950-D350-4D5D-BC97-B23CED8DD941}
+	EndGlobalSection
+EndGlobal
