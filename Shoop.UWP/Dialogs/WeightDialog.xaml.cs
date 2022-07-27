@@ -38,7 +38,7 @@ namespace Shoop.UWP.Dialogs
             var viewModel = DataContext as ProductViewModel;
 
 
-            AdminService.Current.AddProduct(DataContext as ProductByWeight);
+            AdminService.Current.AddOrUpdate(DataContext as ProductByWeight);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

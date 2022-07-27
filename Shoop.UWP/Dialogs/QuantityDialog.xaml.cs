@@ -37,8 +37,7 @@ namespace Shoop.UWP.Dialogs
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-
-            AdminService.Current.AddProduct(DataContext as ProductByQuantity);
+            AdminService.Current.AddOrUpdate(DataContext as ProductByQuantity);
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

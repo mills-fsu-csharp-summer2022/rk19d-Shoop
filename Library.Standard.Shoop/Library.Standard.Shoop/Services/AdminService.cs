@@ -1,5 +1,6 @@
 ﻿using Library.Shoop.Models;
 using Library.Shoop.Utility;
+using Library.Standard.Shoop.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Library.Shoop.Services
         {
             get
             {
+                var productJson = new WebRequestHandler().Get("http://localhost:5260/Product");
                 return inventoryList;
             }
         }
@@ -62,41 +64,69 @@ namespace Library.Shoop.Services
         // public constructor that creates a new list of products for inventory
         private AdminService()
         {
-            inventoryList = new List<Product>();
 
-            listNavigator = new ListNavigator<Product>(inventoryList);
+            var productJson = new WebRequestHandler().Get("http://localhost:5260/Product").Result;
+            inventoryList = JsonConvert.DeserializeObject<List<Product>>(productJson);
+
+           // listNavigator = new ListNavigator<Product>(inventoryList);
         }
 
         // public method to add a new product to the inventory
-        public void AddProduct(Product product)
+        public void AddOrUpdate(Product product)
         {
-            if (product.Id <= 0)
+
+            if (product is ProductByQuantity)
             {
-                product.Id = NextId;
-                inventoryList.Add(product);
+                var response = new WebRequestHandler().Post("http://localhost:5260/Quantity/AddOrUpdateQuantity", product).Result;
+                var newQuanProd = JsonConvert.DeserializeObject<ProductByQuantity>(response);
+
+                var oldVersion = inventoryList.FirstOrDefault(i => i.Id == newQuanProd.Id);
+                if (oldVersion != null)
+                {
+                   var index = inventoryList.IndexOf(oldVersion);
+                   inventoryList.RemoveAt(index);
+                   inventoryList.Insert(index, newQuanProd);
+                }
+                else
+                {
+                    inventoryList.Add(newQuanProd);
+                }
             }
-            //else
-            //{
-            //    inventoryList.Add(product);
-            //}
+            else if (product is ProductByWeight)
+            {
+                var response = new WebRequestHandler().Post("http://localhost:5260/Weight/AddOrUpdateWeight", product).Result;
+                var newWeightProd = JsonConvert.DeserializeObject<ProductByWeight>(response);
+
+
+                var oldVersion = inventoryList.FirstOrDefault(i => i.Id == newWeightProd.Id);
+                if (oldVersion != null)
+                {
+                    var index = inventoryList.IndexOf(oldVersion);
+                    inventoryList.RemoveAt(index);
+                    inventoryList.Insert(index, newWeightProd);
+                }
+                else
+                {
+                    inventoryList.Add(newWeightProd);
+                }
+            }
         }
 
         // public method to remove a product from the inventory
         public void Remove(int id)
         {
-            var productToRemove = inventoryList.FirstOrDefault(t => t.Id == id);
+            var response = new WebRequestHandler().Get($"http://localhost:5260/Product/Delete/{id}");
+            var productToDelete = inventoryList.FirstOrDefault(t => t.Id == id);
 
-            if (productToRemove != null)
-            {
-                inventoryList.Remove(productToRemove);
-            }
-            else
+            if (productToDelete == null)
             {
                 return;
             }
-        }
 
-        // public method to update a product in the inventory
+            inventoryList.Remove(productToDelete);
+        }
+        
+        // public method to update a product in the inventory -- *NOT USED in UWP Version*
         public void Update(Product product)
         {
 

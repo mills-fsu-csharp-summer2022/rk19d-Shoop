@@ -1,4 +1,5 @@
 ﻿using Library.Shoop.Models;
+using Library.Standard.Shoop.Utility;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace Library.Shoop.Services
         {
             get
             {
+                var productJson = new WebRequestHandler().Get("http://localhost:5260/Cart");
                 return cartList;
             }
         }
@@ -63,13 +65,11 @@ namespace Library.Shoop.Services
         // private constructor for the user service that creates a new list of products and creates an instance of the admin service
         private UserService()
         {
-            cartList = new List<Product>();
-            adminService = AdminService.Current;
 
-            //if (!Directory.Exists())
-            //{
-            //    Directory.CreateDirectory(cartPersistPath);
-            //}
+            var productJson = new WebRequestHandler().Get("http://localhost:5260/Cart").Result;
+            cartList = JsonConvert.DeserializeObject<List<Product>>(productJson);
+
+            adminService = AdminService.Current;
         }
 
 
@@ -86,7 +86,13 @@ namespace Library.Shoop.Services
                     if (quantityProduct.typeOfProduct > 0)
                     {
                         product.Id = NextId;
-                        cartList.Add(product);
+                        
+
+                        var response = new WebRequestHandler().Post("http://localhost:5260/Cart/AddToCart", product).Result;
+                        var newQuanProd = JsonConvert.DeserializeObject<ProductByQuantity>(response);
+                        cartList.Add(newQuanProd);
+                        
+
                         quantityProduct.productAmount = amount;
 
                         // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
@@ -110,8 +116,12 @@ namespace Library.Shoop.Services
                     if (weightProduct.typeOfProduct > 0)
                     {
                         product.Id = NextId;
-                        cartList.Add(product);
+                        
                         weightProduct.productAmount = amount;
+                        
+                        var response = new WebRequestHandler().Post("http://localhost:5260/Cart/AddToCart", product).Result;
+                        var newWeightProd = JsonConvert.DeserializeObject<ProductByWeight>(response);
+                        cartList.Add(newWeightProd);
 
                         // if the product in inventory is less than the quantity in the cart, then the product is removed from the cart if not the quantity is reduced
                         if (weightProduct.typeOfProduct > 1)
@@ -127,8 +137,6 @@ namespace Library.Shoop.Services
             }
             else
             {
-                // if the product is not in stock, then show an error message
-                Console.WriteLine("Sorry, we don't have this item in stock");
                 return;
             }
         }
@@ -136,12 +144,16 @@ namespace Library.Shoop.Services
         // public method to remove a product from the cart
         public void Delete(int id)
         {
-            // find the product in the cart using the ID
+
+            var response = new WebRequestHandler().Get($"http://localhost:5260/Product/Delete/{id}");
             var productToDelete = cartList.FirstOrDefault(t => t.Id == id);
+
             if (productToDelete == null)
             {
                 return;
             }
+
+            //cartList.Remove(productToDelete);
 
             // if the product is found then add it back to the inventory and remove it from the cart
 
@@ -153,7 +165,7 @@ namespace Library.Shoop.Services
                 {
                     if (quantityProduct.typeOfProduct == 1)
                     {
-                        adminService.AddProduct(productToDelete);
+                        adminService.AddOrUpdate(productToDelete);
                     }
                     else
                     {
@@ -171,7 +183,7 @@ namespace Library.Shoop.Services
                 {
                     if (weightProduct.typeOfProduct == 1)
                     {
-                        adminService.AddProduct(productToDelete);
+                        adminService.AddOrUpdate(productToDelete);
                     }
                     else
                     {

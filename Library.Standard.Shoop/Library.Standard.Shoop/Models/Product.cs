@@ -1,5 +1,11 @@
-﻿namespace Library.Shoop.Models // Note: actual namespace depends on the project name.
+﻿using Library.Standard.Shoop.Utility;
+using Newtonsoft.Json;
+
+namespace Library.Shoop.Models // Note: actual namespace depends on the project name.
 {
+
+    [JsonConverter(typeof(ProductJsonConverter))]
+
     public partial class Product
     {
         public string Name { get; set; }
@@ -10,8 +16,6 @@
 
         public bool IsBogo { get; set; }
         public virtual double TotalPrice { get; set; }
-
-        public double FinalPrice { get; set; }
 
         public virtual int typeOfProduct { get; set; }
 
